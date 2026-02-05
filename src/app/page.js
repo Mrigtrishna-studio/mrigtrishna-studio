@@ -38,10 +38,7 @@ export default function HomePage() {
       try {
         const settingsRes = await fetch('/api/settings', { cache: 'no-store' });
         const settingsData = await settingsRes.json();
-        
-        if (settingsData.success) {
-          setHeroSettings(settingsData.data);
-        }
+        if (settingsData.success) setHeroSettings(settingsData.data);
 
         const portRes = await fetch('/api/portfolio', { cache: 'no-store' });
         const portData = await portRes.json();
@@ -50,7 +47,6 @@ export default function HomePage() {
         const jourRes = await fetch('/api/journal', { cache: 'no-store' });
         const jourData = await jourRes.json();
         if (jourData.success) setJournal(jourData.data.slice(0, 3));
-        
       } catch (error) {
         console.error("Error loading data", error);
       } finally {
@@ -79,9 +75,11 @@ export default function HomePage() {
             />
           </div>
         ) : (
-          <div className="absolute inset-0 z-0 bg-linear-to-br from-navy via-black to-navy" />
+          // FIXED: bg-linear -> bg-gradient
+          <div className="absolute inset-0 z-0 bg-gradient-to-br from-navy via-black to-navy" />
         )}
-        <div className="absolute inset-0 bg-linear-to-t from-navy via-navy/40 to-transparent z-10" />
+        {/* FIXED: bg-linear -> bg-gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/40 to-transparent z-10" />
         <div className="relative z-20 text-center px-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <h1 className="text-5xl md:text-8xl font-bold uppercase tracking-tighter mb-4 leading-[0.9]">
             {heroSettings?.heroText || "Mrigtrishna"}
@@ -106,17 +104,17 @@ export default function HomePage() {
               href={item.artstationLink} 
               target="_blank" 
               key={item._id} 
-              // Changed: Removed scale/transform, kept border transition
-              className="group relative block aspect-4/5 overflow-hidden rounded-lg bg-navy-light border border-taupe/20 hover:border-gold transition-colors duration-300"
+              // FIXED: aspect-4/5 -> aspect-[4/5]
+              className="group relative block aspect-[4/5] overflow-hidden rounded-lg bg-navy-light border border-taupe/20 hover:border-gold transition-colors duration-300"
             >
               <Image 
                 src={item.image} 
                 alt={item.title} 
                 fill 
-                // Changed: Removed 'scale' class. Only opacity changes on hover.
                 className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300" 
               />
-              <div className="absolute bottom-0 left-0 w-full p-6 bg-linear-to-t from-navy to-transparent pt-20">
+              {/* FIXED: bg-linear -> bg-gradient */}
+              <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-navy to-transparent pt-20">
                 <p className="text-xs text-gold uppercase tracking-widest mb-1">{item.category}</p>
                 <h3 className="text-xl font-bold text-white group-hover:translate-x-2 transition-transform">{item.title}</h3>
               </div>
@@ -145,7 +143,6 @@ export default function HomePage() {
               <Link 
                 href={`/journal/${item._id}`}
                 key={item._id} 
-                // Changed: Removed scale/transform, kept border transition
                 className="group block bg-navy border border-taupe/20 p-6 rounded-xl hover:border-gold transition-colors duration-300"
               >
                 <div className="h-48 relative mb-6 rounded overflow-hidden">
@@ -153,7 +150,6 @@ export default function HomePage() {
                     src={item.thumbnail} 
                     alt={item.title} 
                     fill 
-                    // Changed: Removed 'scale' class. Static image.
                     className="object-cover" 
                   />
                 </div>
@@ -171,30 +167,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* === WHO AM I === */}
+      {/* === WHO AM I (FIXED) === */}
       <section className="py-32 px-6 max-w-6xl mx-auto relative z-20">
-        
-        {/* Grid Layout: Image Left, Text Right */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
           
-          {/* LEFT: Image (Square & Rounded) */}
-          {/* Changed: Removed scale/transform, kept border transition */}
-          <div className="relative aspect-square w-full max-w-md mx-auto md:mr-auto rounded-3xl overflow-hidden border border-taupe/20 bg-navy-light shadow-2xl group hover:border-gold transition-colors duration-300">
+          {/* LEFT: Image Container - Simplified */}
+          {/* FIXED: Removed min-h, fixed bg-gradient, kept aspect-square */}
+          <div className="relative w-full aspect-square max-w-md mx-auto md:mr-auto rounded-3xl overflow-hidden border border-taupe/20 bg-navy-light shadow-2xl group hover:border-gold transition-colors duration-300">
              {heroSettings?.profileImage ? (
                <Image 
                  src={heroSettings.profileImage} 
                  alt="Niraj Kumar" 
                  fill 
-                 // Changed: Removed 'scale' class. Static image.
                  className="object-cover"
+                 // Added sizes prop for performance and correct sizing
+                 sizes="(max-width: 768px) 100vw, 50vw" 
                />
              ) : (
                <div className="w-full h-full flex items-center justify-center">
                   <span className="text-gold font-bold text-4xl">NK</span>
                </div>
              )}
-             {/* Subtle Overlay */}
-             <div className="absolute inset-0 bg-linear-to-t from-navy/40 to-transparent pointer-events-none" />
+             {/* FIXED: bg-linear -> bg-gradient */}
+             <div className="absolute inset-0 bg-gradient-to-t from-navy/40 to-transparent pointer-events-none" />
           </div>
 
           {/* RIGHT: Content */}

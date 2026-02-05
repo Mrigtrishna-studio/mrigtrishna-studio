@@ -5,8 +5,22 @@ import Footer from '@/components/Footer';
 import { 
   Mail, Send, Loader2, CheckCircle, 
   Github, Youtube, Instagram, Twitter, Linkedin, 
-  Palette, ShoppingBag, BookOpen 
+  ShoppingBag, BookOpen 
 } from 'lucide-react';
+
+// === CUSTOM ARTSTATION ICON (Official Logo) ===
+const ArtStationIcon = ({ size = 24, className }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <path d="M12.016 4.72L24 22H20.06L12.016 8.78L4.35 22H0L12.016 4.72ZM10.426 15.34L12.016 12.78L13.626 15.34H10.426ZM12.016 10.6L16.296 17.5H7.736L12.016 10.6Z" />
+  </svg>
+);
 
 export default function ContactPage() {
   const [loading, setLoading] = useState(false);
@@ -40,7 +54,8 @@ export default function ContactPage() {
 
   // UI Configuration for Socials (Icon + Color)
   const socialConfig = {
-    artstation: { icon: <Palette />, color: 'hover:text-[#13AFF0]', label: 'ArtStation' },
+    // Uses the Custom Icon now
+    artstation: { icon: <ArtStationIcon />, color: 'hover:text-[#13AFF0]', label: 'ArtStation' },
     github:     { icon: <Github />, color: 'hover:text-white', label: 'GitHub' },
     youtube:    { icon: <Youtube />, color: 'hover:text-[#FF0000]', label: 'YouTube' },
     linkedin:   { icon: <Linkedin />, color: 'hover:text-[#0A66C2]', label: 'LinkedIn' },
@@ -75,12 +90,13 @@ export default function ContactPage() {
       <Navbar />
 
       <div className="flex-grow pt-32 pb-20 px-6 max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        {/* CSS FIX: gap-12 on mobile, gap-16 on desktop to prevent squashing */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
           
           {/* === LEFT: Socials & Info === */}
           <div className="space-y-12 animate-in fade-in slide-in-from-left-8 duration-1000">
             <div>
-              <h1 className="text-5xl font-bold uppercase tracking-tight mb-6">Let's <span className="text-gold">Connect</span></h1>
+              <h1 className="text-4xl md:text-5xl font-bold uppercase tracking-tight mb-6">Let's <span className="text-gold">Connect</span></h1>
               <p className="text-slate text-lg leading-relaxed">Whether you have a game dev question or a freelance proposal, I'm always open to a conversation.</p>
             </div>
 
@@ -93,12 +109,12 @@ export default function ContactPage() {
                   const data = socials[key]; // URL & Visibility from DB
                   
                   // Only render if data exists AND 'show' is true
-                  if (!data || !data.show) return null;
+                  if (!data || !data.show || !data.url) return null;
 
                   return (
                     <a 
                       key={key} 
-                      href={data.url || '#'} 
+                      href={data.url} 
                       target="_blank" 
                       className={`flex flex-col items-center justify-center p-6 bg-navy-light border border-taupe/20 rounded-xl transition-all duration-300 group hover:border-gold/30 hover:-translate-y-1 ${config.color}`}
                     >
@@ -115,18 +131,18 @@ export default function ContactPage() {
             </div>
 
             {/* DYNAMIC EMAIL DISPLAY */}
-            <div className="bg-navy-light/50 p-6 rounded-xl border border-taupe/10 flex items-center gap-4">
-              <div className="bg-gold/10 p-3 rounded-full text-gold"><Mail size={24} /></div>
+            <div className="bg-navy-light/50 p-6 rounded-xl border border-taupe/10 flex items-center gap-4 break-all">
+              <div className="bg-gold/10 p-3 rounded-full text-gold flex-shrink-0"><Mail size={24} /></div>
               <div>
                 <p className="text-xs text-slate uppercase tracking-widest">Email Directly</p>
-                <a href={`mailto:${contactEmail}`} className="text-xl font-bold hover:text-gold transition-colors">
+                <a href={`mailto:${contactEmail}`} className="text-lg md:text-xl font-bold hover:text-gold transition-colors break-all">
                   {contactEmail}
                 </a>
               </div>
             </div>
           </div>
 
-          {/* === RIGHT: Form (Unchanged) === */}
+          {/* === RIGHT: Form === */}
           <div className="bg-navy-light border border-taupe/20 p-8 md:p-10 rounded-2xl shadow-2xl animate-in fade-in slide-in-from-right-8 duration-1000 delay-200">
             {success ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-20">
@@ -138,29 +154,32 @@ export default function ContactPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <h3 className="text-2xl font-bold mb-8">Send a Message</h3>
-                {/* Inputs ... (Keep your existing inputs) */}
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-gold uppercase tracking-widest">Name</label>
-                    <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-navy border border-taupe/30 rounded-lg p-4 text-white focus:border-gold outline-none" />
+                    <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-navy border border-taupe/30 rounded-lg p-4 text-white focus:border-gold outline-none" placeholder="John Doe" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-gold uppercase tracking-widest">Email</label>
-                    <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-navy border border-taupe/30 rounded-lg p-4 text-white focus:border-gold outline-none" />
+                    <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-navy border border-taupe/30 rounded-lg p-4 text-white focus:border-gold outline-none" placeholder="john@example.com" />
                   </div>
                 </div>
+                
                 <div className="space-y-2">
                    <label className="text-xs font-bold text-gold uppercase tracking-widest">Topic</label>
                    <div className="relative">
-                    <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-navy border border-taupe/30 rounded-lg p-4 text-white focus:border-gold outline-none appearance-none">
+                    <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full bg-navy border border-taupe/30 rounded-lg p-4 text-white focus:border-gold outline-none appearance-none cursor-pointer">
                       {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                     </select>
                    </div>
                 </div>
+                
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-gold uppercase tracking-widest">Message</label>
-                  <textarea required rows={5} value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} className="w-full bg-navy border border-taupe/30 rounded-lg p-4 text-white focus:border-gold outline-none" />
+                  <textarea required rows={5} value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} className="w-full bg-navy border border-taupe/30 rounded-lg p-4 text-white focus:border-gold outline-none" placeholder="How can I help you?" />
                 </div>
+                
                 <button type="submit" disabled={loading} className="w-full bg-gold text-navy font-bold text-lg uppercase tracking-widest py-4 rounded-lg hover:bg-white transition flex items-center justify-center gap-2">
                   {loading ? <Loader2 className="animate-spin" /> : <><Send size={20} /> Send Message</>}
                 </button>
