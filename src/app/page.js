@@ -100,18 +100,18 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {portfolio.map((item) => (
-            <Link 
-              href={item.artstationLink} 
-              target="_blank" 
-              key={item._id} 
+            <Link
+              href={item.artstationLink}
+              target="_blank"
+              key={item._id}
               // FIXED: aspect-4/5 -> aspect-[4/5]
               className="group relative block aspect-[4/5] overflow-hidden rounded-lg bg-navy-light border border-taupe/20 hover:border-gold transition-colors duration-300"
             >
-              <Image 
-                src={item.image} 
-                alt={item.title} 
-                fill 
-                className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300" 
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
               />
               {/* FIXED: bg-linear -> bg-gradient */}
               <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-navy to-transparent pt-20">
@@ -121,10 +121,10 @@ export default function HomePage() {
             </Link>
           ))}
           {portfolio.length === 0 && !loading && (
-             <div className="col-span-3 text-center py-12 border border-dashed border-taupe/30 rounded-lg">
-               <p className="text-slate mb-2">No projects found.</p>
-               <Link href="/login" className="text-gold text-xs uppercase tracking-widest hover:underline">Manage Portfolio</Link>
-             </div>
+            <div className="col-span-3 text-center py-12 border border-dashed border-taupe/30 rounded-lg">
+              <p className="text-slate mb-2">No projects found.</p>
+              <Link href="/login" className="text-gold text-xs uppercase tracking-widest hover:underline">Manage Portfolio</Link>
+            </div>
           )}
         </div>
       </section>
@@ -140,28 +140,32 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {journal.map((item) => (
-              <Link 
-                href={`/journal/${item._id}`}
-                key={item._id} 
+              <Link
+                href={item.hashnodeLink || '#'} // Uses your actual external link
+                target="_blank"                 // Opens in new tab
+                rel="noopener noreferrer"       // Security best practice
+                key={item._id}
                 className="group block bg-navy border border-taupe/20 p-6 rounded-xl hover:border-gold transition-colors duration-300"
               >
                 <div className="h-48 relative mb-6 rounded overflow-hidden">
-                  <Image 
-                    src={item.thumbnail} 
-                    alt={item.title} 
-                    fill 
-                    className="object-cover" 
+                  <Image
+                    src={item.thumbnail}
+                    alt={item.title}
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 <h3 className="text-xl font-bold mb-3 leading-tight group-hover:text-gold transition-colors">{item.title}</h3>
                 <p className="text-slate text-sm line-clamp-3 mb-4">{item.description}</p>
-                <span className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">Read Article <ExternalLink size={12} /></span>
+                <span className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                  Read Article <ExternalLink size={12} />
+                </span>
               </Link>
             ))}
-             {journal.length === 0 && !loading && (
-               <div className="col-span-3 text-center py-12">
-                 <p className="text-slate">No journal entries yet.</p>
-               </div>
+            {journal.length === 0 && !loading && (
+              <div className="col-span-3 text-center py-12">
+                <p className="text-slate">No journal entries yet.</p>
+              </div>
             )}
           </div>
         </div>
@@ -170,40 +174,40 @@ export default function HomePage() {
       {/* === WHO AM I (FIXED) === */}
       <section className="py-32 px-6 max-w-6xl mx-auto relative z-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          
+
           {/* LEFT: Image Container - Simplified */}
           {/* FIXED: Removed min-h, fixed bg-gradient, kept aspect-square */}
           <div className="relative w-full aspect-square max-w-md mx-auto md:mr-auto rounded-3xl overflow-hidden border border-taupe/20 bg-navy-light shadow-2xl group hover:border-gold transition-colors duration-300">
-             {heroSettings?.profileImage ? (
-               <Image 
-                 src={heroSettings.profileImage} 
-                 alt="Niraj Kumar" 
-                 fill 
-                 className="object-cover"
-                 // Added sizes prop for performance and correct sizing
-                 sizes="(max-width: 768px) 100vw, 50vw" 
-               />
-             ) : (
-               <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-gold font-bold text-4xl">NK</span>
-               </div>
-             )}
-             {/* FIXED: bg-linear -> bg-gradient */}
-             <div className="absolute inset-0 bg-gradient-to-t from-navy/40 to-transparent pointer-events-none" />
+            {heroSettings?.profileImage ? (
+              <Image
+                src={heroSettings.profileImage}
+                alt="Niraj Kumar"
+                fill
+                className="object-cover"
+                // Added sizes prop for performance and correct sizing
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="text-gold font-bold text-4xl">NK</span>
+              </div>
+            )}
+            {/* FIXED: bg-linear -> bg-gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/40 to-transparent pointer-events-none" />
           </div>
 
           {/* RIGHT: Content */}
           <div className="text-center md:text-left">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Who is <br/><span className="text-gold">Niraj Kumar?</span>
+              Who is <br /><span className="text-gold">Niraj Kumar?</span>
             </h2>
-            
+
             <p className="text-slate text-lg leading-relaxed mb-8 whitespace-pre-wrap">
               {heroSettings?.profileDescription || "A Technical Artist and Developer bridging the gap between creative storytelling and real-time engineering. I build worlds, optimize pipelines, and craft digital experiences."}
             </p>
 
-            <Link 
-              href="/about" 
+            <Link
+              href="/about"
               className="inline-flex items-center gap-3 border border-gold text-gold px-8 py-4 rounded-full uppercase text-xs font-bold tracking-widest hover:bg-gold hover:text-navy transition-all"
             >
               Read Full Story <ArrowRight size={16} />
