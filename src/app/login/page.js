@@ -5,9 +5,8 @@ import { Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
-  
-  // State to track if we are typing Email (step 1) or Code (step 2)
-  const [step, setStep] = useState(1); 
+
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +26,7 @@ export default function LoginPage() {
       });
 
       const data = await res.json();
-      
+
       if (data.success) {
         setStep(2); // Move to next step
         setMessage('Code sent! Check your email.');
@@ -48,6 +47,8 @@ export default function LoginPage() {
     setMessage('');
 
     try {
+      // 🚨 SWITCHED BACK TO FETCH 🚨
+      // This talks directly to your route.js, which creates the 'admin_token' cookie
       const res = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -57,10 +58,11 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (data.success) {
-        // Success! Redirect to Admin Dashboard
-        router.push('/admin'); 
+        // ✅ SUCCESS: Cookie is created by your backend! Now we enter the admin panel.
+        router.push('/admin');
+        router.refresh(); // Tells Next.js to immediately see the new cookie
       } else {
-        setMessage(data.message || 'Invalid code.');
+        setMessage(data.message || 'Invalid code or expired.');
       }
     } catch (err) {
       setMessage('Something went wrong.');
@@ -71,7 +73,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-navy p-6">
-      
       <div className="w-full max-w-md bg-navy-light border border-taupe/30 rounded-2xl p-8 shadow-2xl">
         
         {/* Header */}
@@ -90,8 +91,8 @@ export default function LoginPage() {
               <label className="text-xs font-bold uppercase tracking-widest text-slate-light">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 text-slate" size={18} />
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@mrigtrishna.com"
@@ -101,8 +102,8 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               className="w-full bg-gold hover:bg-gold-hover text-navy font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
             >
@@ -118,8 +119,8 @@ export default function LoginPage() {
           <form onSubmit={handleVerify} className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-slate-light">Enter 6-Digit Code</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="123456"
@@ -130,15 +131,15 @@ export default function LoginPage() {
               <p className="text-xs text-center text-slate">Code sent to {email}</p>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               className="w-full bg-gold hover:bg-gold-hover text-navy font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all"
             >
               {loading ? <Loader2 className="animate-spin" size={20} /> : "Verify & Login"}
             </button>
-            
-            <button 
+
+            <button
               type="button"
               onClick={() => setStep(1)}
               className="w-full text-xs text-slate hover:text-white mt-4"
@@ -158,4 +159,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}   
+}

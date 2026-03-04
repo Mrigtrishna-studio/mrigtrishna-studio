@@ -44,6 +44,8 @@ export default function HomePage() {
         const portData = await portRes.json();
         if (portData.success) setPortfolio(portData.data.slice(0, 3));
 
+        // Note: You may want to update this to /api/journal/series later 
+        // if you strictly only want to show the new series cards here
         const jourRes = await fetch('/api/journal', { cache: 'no-store' });
         const jourData = await jourRes.json();
         if (jourData.success) setJournal(jourData.data.slice(0, 3));
@@ -75,10 +77,8 @@ export default function HomePage() {
             />
           </div>
         ) : (
-          // FIXED: bg-linear -> bg-gradient
           <div className="absolute inset-0 z-0 bg-gradient-to-br from-navy via-black to-navy" />
         )}
-        {/* FIXED: bg-linear -> bg-gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/40 to-transparent z-10" />
         <div className="relative z-20 text-center px-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <h1 className="text-5xl md:text-8xl font-bold uppercase tracking-tighter mb-4 leading-[0.9]">
@@ -104,7 +104,6 @@ export default function HomePage() {
               href={item.artstationLink}
               target="_blank"
               key={item._id}
-              // FIXED: aspect-4/5 -> aspect-[4/5]
               className="group relative block aspect-[4/5] overflow-hidden rounded-lg bg-navy-light border border-taupe/20 hover:border-gold transition-colors duration-300"
             >
               <Image
@@ -113,7 +112,6 @@ export default function HomePage() {
                 fill
                 className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
               />
-              {/* FIXED: bg-linear -> bg-gradient */}
               <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-navy to-transparent pt-20">
                 <p className="text-xs text-gold uppercase tracking-widest mb-1">{item.category}</p>
                 <h3 className="text-xl font-bold text-white group-hover:translate-x-2 transition-transform">{item.title}</h3>
@@ -141,24 +139,33 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {journal.map((item) => (
               <Link
-                href={item.hashnodeLink || '#'} // Uses your actual external link
-                target="_blank"                 // Opens in new tab
-                rel="noopener noreferrer"       // Security best practice
+                href={item.slug ? `/journal/${item.slug}` : (item.hashnodeLink || '#')} // Adapts to new Series or old Hashnode
+                target={item.slug ? "_self" : "_blank"} // Internal links open in same tab
+                rel={item.slug ? "" : "noopener noreferrer"}
                 key={item._id}
-                className="group block bg-navy border border-taupe/20 p-6 rounded-xl hover:border-gold transition-colors duration-300"
+                className="group block bg-navy border border-taupe/20 p-6 rounded-xl hover:border-gold transition-colors duration-300 flex flex-col h-full"
               >
-                <div className="h-48 relative mb-6 rounded overflow-hidden">
-                  <Image
-                    src={item.thumbnail}
-                    alt={item.title}
-                    fill
-                    className="object-cover"
-                  />
+                {/* 🚨 THE FIX: Safe Image Rendering */}
+                <div className="h-48 relative mb-6 rounded overflow-hidden bg-navy-light/50 flex items-center justify-center border border-taupe/20 shrink-0">
+                  {item.thumbnail || item.coverImage ? (
+                    <Image
+                      src={item.thumbnail || item.coverImage} // Supports old 'thumbnail' or new 'coverImage'
+                      alt={item.title || "Cover Image"}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <span className="text-xs font-mono text-slate/50 tracking-widest uppercase">
+                      No Cover Image
+                    </span>
+                  )}
                 </div>
+                
                 <h3 className="text-xl font-bold mb-3 leading-tight group-hover:text-gold transition-colors">{item.title}</h3>
-                <p className="text-slate text-sm line-clamp-3 mb-4">{item.description}</p>
-                <span className="text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                  Read Article <ExternalLink size={12} />
+                <p className="text-slate text-sm line-clamp-3 mb-4 flex-1">{item.description}</p>
+                
+                <span className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 mt-auto">
+                  Read {item.slug ? "Series" : "Article"} {item.slug ? <ArrowRight size={12} /> : <ExternalLink size={12} />}
                 </span>
               </Link>
             ))}
@@ -171,20 +178,17 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* === WHO AM I (FIXED) === */}
+      {/* === WHO AM I === */}
       <section className="py-32 px-6 max-w-6xl mx-auto relative z-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20 items-center">
 
-          {/* LEFT: Image Container - Simplified */}
-          {/* FIXED: Removed min-h, fixed bg-gradient, kept aspect-square */}
           <div className="relative w-full aspect-square max-w-md mx-auto md:mr-auto rounded-3xl overflow-hidden border border-taupe/20 bg-navy-light shadow-2xl group hover:border-gold transition-colors duration-300">
             {heroSettings?.profileImage ? (
               <Image
                 src={heroSettings.profileImage}
-                alt="Niraj Kumar"
+                alt="Profile"
                 fill
                 className="object-cover"
-                // Added sizes prop for performance and correct sizing
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
             ) : (
@@ -192,11 +196,9 @@ export default function HomePage() {
                 <span className="text-gold font-bold text-4xl">NK</span>
               </div>
             )}
-            {/* FIXED: bg-linear -> bg-gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-navy/40 to-transparent pointer-events-none" />
           </div>
 
-          {/* RIGHT: Content */}
           <div className="text-center md:text-left">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               Who is <br /><span className="text-gold">Niraj Kumar?</span>
