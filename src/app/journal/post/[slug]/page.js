@@ -14,6 +14,26 @@ export default function BlogPostReader() {
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
 
+
+    // Inside your BlogPost component...
+    useEffect(() => {
+        const recordView = async () => {
+            try {
+                await fetch('/api/posts/view', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ slug: params.slug }) // Ensure params.slug is available
+                });
+            } catch (err) {
+                console.error("Failed to record view:", err);
+            }
+        };
+
+        if (params?.slug) {
+            recordView();
+        }
+    }, [params?.slug]);
+
     useEffect(() => {
         async function fetchPost() {
             try {

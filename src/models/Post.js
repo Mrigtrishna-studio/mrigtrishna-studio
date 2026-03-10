@@ -2,14 +2,14 @@ import mongoose from 'mongoose';
 
 const SectionSchema = new mongoose.Schema({
   id: { type: String, required: true },
-  type: { 
-    type: String, 
+  type: {
+    type: String,
     // The 'code' enum is here
-    enum: ['text', 'image-full', 'image-left', 'image-right', 'quote', 'code'], 
-    default: 'text' 
+    enum: ['text', 'image-full', 'image-left', 'image-right', 'quote', 'code'],
+    default: 'text'
   },
-  content: { type: String }, 
-  imageUrl: { type: String }, 
+  content: { type: String },
+  imageUrl: { type: String },
   imageAlt: { type: String },
   caption: { type: String }
 });
@@ -19,8 +19,9 @@ const PostSchema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true },
   excerpt: { type: String },
   coverImage: { type: String },
+  views: { type: Number, default: 0 },
   seriesId: { type: mongoose.Schema.Types.ObjectId, ref: 'Series', required: true },
-  sections: [SectionSchema], 
+  sections: [SectionSchema],
   status: { type: String, enum: ['draft', 'published'], default: 'published' }
 }, { timestamps: true });
 

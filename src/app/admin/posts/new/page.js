@@ -13,7 +13,7 @@ export default function NewPostEditor() {
   const [excerpt, setExcerpt] = useState('');
   const [coverImage, setCoverImage] = useState('');
   const [seriesId, setSeriesId] = useState('');
-  
+
   const [sections, setSections] = useState([]);
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function NewPostEditor() {
       formData.append("file", compressedImage);
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
       const data = await res.json();
-      
+
       if (data.success) {
         if (sectionId === 'cover') {
           setCoverImage(data.url);
@@ -109,14 +109,14 @@ export default function NewPostEditor() {
   const applyFormatting = (sectionId, tagOpen, tagClose) => {
     const textarea = document.getElementById(`textarea-${sectionId}`);
     if (!textarea) return;
-    
+
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = textarea.value.substring(start, end);
     const newText = textarea.value.substring(0, start) + tagOpen + selectedText + tagClose + textarea.value.substring(end);
-    
+
     updateSection(sectionId, 'content', newText);
-    
+
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + tagOpen.length, end + tagOpen.length);
@@ -125,10 +125,10 @@ export default function NewPostEditor() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!title.trim()) return alert("Please enter a Post Title before publishing.");
     if (!seriesId) return alert("Please select a Series for this devlog.");
-    
+
     setLoading(true);
 
     try {
@@ -176,7 +176,7 @@ export default function NewPostEditor() {
               <input type="text" value={title} onChange={handleTitleChange} className="w-full bg-[#0a1120] border border-white/10 rounded-lg p-4 text-white focus:border-gold outline-none" placeholder="e.g. Character Rigging in Blender" />
             </div>
           </div>
-          
+
           <div>
             <label className="block text-xs uppercase text-slate mb-2 font-bold">Excerpt / Summary</label>
             <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} className="w-full bg-[#0a1120] border border-white/10 rounded-lg p-4 text-white focus:border-gold outline-none h-24" placeholder="Brief summary of this devlog..." />
@@ -198,18 +198,18 @@ export default function NewPostEditor() {
         {/* --- BLOCK BUILDER --- */}
         <div className="space-y-6">
           <h2 className="text-xl font-bold uppercase tracking-widest border-l-4 border-gold pl-4 mb-8">Article Content</h2>
-          
+
           {sections.map((section, index) => (
             <div key={section.id} className="bg-[#162033]/30 p-6 rounded-2xl border border-white/5 relative group transition-all hover:border-gold/30">
-              
+
               <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center gap-4">
                   <span className="text-xs font-bold uppercase tracking-widest text-gold bg-gold/10 px-3 py-1 rounded-full border border-gold/20">
                     {section.type.replace('-', ' ')} block
                   </span>
-                  
+
                   {section.type === 'text' && (
-                    <div className="flex gap-2 bg-[#0a1120] border border-white/10 p-1 rounded-lg">
+                    <div className="w-full bg-[#050810] border border-white/10 rounded-xl p-6 text-gold font-mono text-sm focus:border-gold outline-none min-h-[350px] whitespace-pre resize-y leading-relaxed">
                       <button onClick={() => applyFormatting(section.id, '<b>', '</b>')} className="p-2 hover:bg-white/10 rounded text-slate hover:text-white transition-colors" title="Bold"><Bold size={16} /></button>
                       <button onClick={() => applyFormatting(section.id, '<mark style="background-color: #D4AF37; color: #0a1120; padding: 2px 6px; border-radius: 4px; font-weight: 800; box-shadow: 0 0 10px rgba(212,175,55,0.3);">', '</mark>')} className="p-2 hover:bg-gold/20 rounded text-gold transition-colors" title="Signature Highlight"><Highlighter size={16} /></button>
                     </div>
